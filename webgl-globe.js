@@ -16,6 +16,7 @@
 		var renderer = new THREE.WebGLRenderer();
 
 		renderer.setSize( w, h );
+		renderer.domElement.id = 'globe';
 		document.body.appendChild( renderer.domElement );
 
 		camera.position.z = 1.5;
