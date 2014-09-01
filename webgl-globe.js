@@ -4,25 +4,6 @@
 	var context, earth;
 
 
-	// https://developer.mozilla.org/en-US/docs/Web/WebGL/Getting_started_with_WebGL
-	// function init() {
-	// 	canvas = document.getElementById( 'globe' );
-	// 	gl = canvas.getContext( 'webgl' );
-
-	// 	if ( gl ) {
-	// 		// handle resizing
-	// 		gl.viewport( 0, 0, canvas.width, canvas.height );
-	// 		createGlobe( gl );
-	// 	} else {
-	// 		(function() {
-	// 			var warningMessage = document.createElement( 'em' );
-	// 			warningMessage.appendChild( document.createTextNode( 'WebGL is not supported in this browser.' ));
-	// 			canvas.parentNode.replaceChild( warningMessage, canvas );
-	// 		}());
-	// 	}
-	// }
-
-
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
 	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function init() {
@@ -67,15 +48,10 @@
 	}
 
 
+	// init
 	context = init();
 	earth = createEarth();
 	context.scene.add( earth );
-
-	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
-	// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-	// var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-	// var cube = new THREE.Mesh( geometry, material );
-	// globe.scene.add( cube );
 
 
 	// render loop
