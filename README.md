@@ -6,3 +6,5 @@ based on this excellent tutorial: [How to Make the Earth in WebGL?](http://learn
 and help from [MDN's Getting started with WebGL](https://developer.mozilla.org/en-US/docs/Web/WebGL/Getting_started_with_WebGL).
 
 Ok, this tutorial uses [three.js](http://threejs.org/), it's not entirely *WebGL* ~:)
+
+Textures from [JHT's Planet Pixel Emporium](http://planetpixelemporium.com/earth.html)

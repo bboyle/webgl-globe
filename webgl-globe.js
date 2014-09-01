@@ -1,7 +1,7 @@
 (function( window, THREE ) {
 	'use strict';
 
-	var globe;
+	var context, earth;
 
 
 	// https://developer.mozilla.org/en-US/docs/Web/WebGL/Getting_started_with_WebGL
@@ -56,20 +56,20 @@
 
 	// http://learningthreejs.com/blog/2013/09/16/how-to-make-the-earth-in-webgl/
 	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
-	function createGlobe( scene ) {
+	function createEarth() {
 		var geometry = new THREE.SphereGeometry( 0.5, 32, 32 );
-		// var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-		var material = new THREE.MeshPhongMaterial();
-		// mesh = geometry + material
-		var earthMesh = new THREE.Mesh( geometry, material );
 
-		// add to scene
-		scene.add( earthMesh );
+		var material = new THREE.MeshPhongMaterial();
+		material.map = THREE.ImageUtils.loadTexture( 'image/earthmap1k.jpg' );
+
+		// mesh = geometry + material
+		return new THREE.Mesh( geometry, material );
 	}
 
 
-	globe = init();
-	createGlobe( globe.scene );
+	context = init();
+	earth = createEarth();
+	context.scene.add( earth );
 
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
 	// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
