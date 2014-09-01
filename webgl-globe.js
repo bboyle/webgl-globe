@@ -24,19 +24,27 @@
 
 
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
+	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function init() {
 		var w = window.innerWidth;
 		var h = window.innerHeight;
 		// To actually be able to display anything with Three.js, we need three things:
 		// A scene, a camera, and a renderer so we can render the scene with the camera.
 		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera( 75, w / h, 0.1, 1000 );
+		var camera = new THREE.PerspectiveCamera( 45, w / h, 0.01, 1000 )
 		var renderer = new THREE.WebGLRenderer();
 
 		renderer.setSize( w, h );
 		document.body.appendChild( renderer.domElement );
 
-		camera.position.z = 5;
+		camera.position.z = 1.5;
+
+		// lights
+		var light = new THREE.AmbientLight( 0x888888 );
+		scene.add( light );
+		light = new THREE.DirectionalLight( 0xcccccc, 1 );
+		light.position.set( 5, 3, 5 );
+		scene.add( light );
 
 		return {
 			scene: scene,
@@ -47,8 +55,10 @@
 
 
 	// http://learningthreejs.com/blog/2013/09/16/how-to-make-the-earth-in-webgl/
+	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function createGlobe( scene ) {
 		var geometry = new THREE.SphereGeometry( 0.5, 32, 32 );
+		// var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 		var material = new THREE.MeshPhongMaterial();
 		// mesh = geometry + material
 		var earthMesh = new THREE.Mesh( geometry, material );
@@ -59,20 +69,18 @@
 
 
 	globe = init();
-	// createGlobe( globe.scene );
+	createGlobe( globe.scene );
 
-	var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-	var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-	var cube = new THREE.Mesh( geometry, material );
-	globe.scene.add( cube );
-
+	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
+	// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	// var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+	// var cube = new THREE.Mesh( geometry, material );
+	// globe.scene.add( cube );
 
 
 	// render loop
 	function render() {
 		requestAnimationFrame( render );
-		cube.rotation.x += 0.01;
-		cube.rotation.y += 0.01;
 		globe.renderer.render( globe.scene, globe.camera );
 	}
 	render();
