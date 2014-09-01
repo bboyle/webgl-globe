@@ -57,7 +57,7 @@
 	// render loop
 	function render() {
 		requestAnimationFrame( render );
-		globe.renderer.render( globe.scene, globe.camera );
+		context.renderer.render( context.scene, context.camera );
 	}
 	render();
 
