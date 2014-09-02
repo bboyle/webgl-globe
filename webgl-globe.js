@@ -1,7 +1,7 @@
 (function( window, THREE ) {
 	'use strict';
 
-	var context, earthMesh;
+	var context, earthMesh, cloudMesh;
 
 
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
@@ -128,15 +128,26 @@
 	// init
 	context = init();
 	earthMesh = createEarth();
-	earthMesh.add( createEarthCloudLayer() );
+	cloudMesh = createEarthCloudLayer();
+	earthMesh.add( cloudMesh );
 	context.scene.add( earthMesh );
 
 
 	// render loop
-	function render() {
+	var lastTimeMsec;
+	requestAnimationFrame(function render( nowMsec ) {
 		requestAnimationFrame( render );
+		// measure time
+		lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60; // fps
+		var deltaMsec = Math.min( 200, nowMsec - lastTimeMsec );
+		lastTimeMsec = nowMsec;
+
+		// plot geometry
+		earthMesh.rotateY( 1 / 32 * deltaMsec / 1000 );
+		cloudMesh.rotateY( 1 / 16 * deltaMsec / 1000 );
+
+		// render canvas
 		context.renderer.render( context.scene, context.camera );
-	}
-	render();
+	});
 
 }( window, THREE ));
