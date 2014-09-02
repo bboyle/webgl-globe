@@ -2,24 +2,25 @@
 	'use strict';
 
 	var context, earthMesh, cloudMesh;
+	var RADIUS_EARTH = 0.5;
 
 
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
 	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function init() {
-		var w = window.innerWidth;
-		var h = window.innerHeight;
+		var w = 320;
+		var h = 240;
 		// To actually be able to display anything with Three.js, we need three things:
 		// A scene, a camera, and a renderer so we can render the scene with the camera.
 		var scene = new THREE.Scene();
 		var camera = new THREE.PerspectiveCamera( 45, w / h, 0.01, 1000 )
-		var renderer = new THREE.WebGLRenderer();
+		var renderer = new THREE.WebGLRenderer({ alpha: true });
 
 		renderer.setSize( w, h );
 		renderer.domElement.id = 'globe';
 		document.body.appendChild( renderer.domElement );
 
-		camera.position.z = 1.5;
+		camera.position.z = 2;
 
 		// lights
 		var light = new THREE.AmbientLight( 0x888888 );
@@ -39,14 +40,14 @@
 	// http://learningthreejs.com/blog/2013/09/16/how-to-make-the-earth-in-webgl/
 	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function createEarth() {
-		var geometry = new THREE.SphereGeometry( 0.5, 32, 32 );
+		var geometry = new THREE.SphereGeometry( RADIUS_EARTH, 32, 32 );
 
 		var material = new THREE.MeshPhongMaterial();
 		material.map = THREE.ImageUtils.loadTexture( 'image/earthmap1k.jpg' );
 
 		// bump map for terrain
 		material.bumpMap = THREE.ImageUtils.loadTexture( 'image/earthbump1k.jpg' );
-		material.bumpScale = 0.05;
+		material.bumpScale = 0.5;
 
 		// specular map for oceans
 		material.specularMap = THREE.ImageUtils.loadTexture( 'image/earthspec1k.jpg' );
@@ -54,6 +55,37 @@
 
 		// mesh = geometry + material
 		return new THREE.Mesh( geometry, material );
+	}
+
+
+	function createGlobe( sphere ) {
+		var r = RADIUS_EARTH / 16;
+		var h = RADIUS_EARTH * 2.5;
+		var material = new THREE.MeshPhongMaterial({ color: 0xCD7F32 });
+		var globeMesh, baseMesh;
+		
+		// create spindle
+		var geometry = new THREE.CylinderGeometry( r, r, h );
+
+		var spindleMesh = new THREE.Mesh( geometry, material );
+
+		// rotate earth and spindle
+		spindleMesh.rotation.z = -30 * Math.PI / 180;
+		earthMesh.rotation.z = -30 * Math.PI / 180;
+
+		// create base
+		r = RADIUS_EARTH / 2;
+		h = RADIUS_EARTH / 16;
+		geometry = new THREE.CylinderGeometry( r, r, h );
+
+		baseMesh = new THREE.Mesh( geometry, material );
+		baseMesh.translateY( -1.25 * RADIUS_EARTH );
+
+		globeMesh = new THREE.Mesh();
+		globeMesh.add( spindleMesh );
+		globeMesh.add( baseMesh );
+
+		return globeMesh;
 	}
 
 
@@ -112,7 +144,7 @@
 		// load cloud image
 		cloudsImage.src = 'image/earthcloudmap.jpg';
 
-		geometry = new THREE.SphereGeometry( 0.51, 32, 32 ); // slightly larger than Earth radius
+		geometry = new THREE.SphereGeometry( RADIUS_EARTH + RADIUS_EARTH / 50, 32, 32 ); // slightly larger than Earth radius
 		material = new THREE.MeshPhongMaterial({
 			map: new THREE.Texture( canvas ),
 			side: THREE.DoubleSide,
@@ -127,13 +159,14 @@
 
 	// init
 	context = init();
+	// put Earth in it
 	earthMesh = createEarth();
 	cloudMesh = createEarthCloudLayer();
+	// put a globe stand in it
+	context.scene.add( createGlobe( earthMesh ));
+
 	earthMesh.add( cloudMesh );
 	context.scene.add( earthMesh );
-
-	// rotation for 'globe'
-	earthMesh.rotation.z = -30 * Math.PI / 180;
 
 
 	// render loop
