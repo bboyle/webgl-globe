@@ -61,7 +61,7 @@
 	function createGlobe( sphere ) {
 		var r, h;
 		var geometry;
-		var material = new THREE.MeshPhongMaterial({ color: 0xCD7F32 });
+		var material = new THREE.MeshPhongMaterial({ color: 0xCD7F32, specular: 0xDE8F43, shininess: 30, reflectivity: 0.2 });
 		var globeMesh, spindleMesh, stemMesh, baseMesh, ringMesh;
 		
 		// create ring
