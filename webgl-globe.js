@@ -137,13 +137,11 @@
 
 
 	// render loop
-	var lastTimeMsec;
 	requestAnimationFrame(function render( nowMsec ) {
-		requestAnimationFrame( render );
 		// measure time
-		lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60; // fps
-		var deltaMsec = Math.min( 200, nowMsec - lastTimeMsec );
-		lastTimeMsec = nowMsec;
+		render.lastTimeMsec = render.lastTimeMsec || nowMsec - 1000 / 60; // fps
+		var deltaMsec = Math.min( 200, nowMsec - render.lastTimeMsec );
+		render.lastTimeMsec = nowMsec;
 
 		// plot geometry
 		earthMesh.rotateY( 1 / 32 * deltaMsec / 1000 );
@@ -151,6 +149,8 @@
 
 		// render canvas
 		context.renderer.render( context.scene, context.camera );
+
+		requestAnimationFrame( render );
 	});
 
 }( window, THREE ));
