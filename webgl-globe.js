@@ -44,6 +44,10 @@
 		var material = new THREE.MeshPhongMaterial();
 		material.map = THREE.ImageUtils.loadTexture( 'image/earthmap1k.jpg' );
 
+		// bump map for terrain
+		material.bumpMap = THREE.ImageUtils.loadTexture( 'image/earthbump1k.jpg' );
+		material.bumpScale = 0.05;
+
 		// mesh = geometry + material
 		return new THREE.Mesh( geometry, material );
 	}
