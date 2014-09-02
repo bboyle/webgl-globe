@@ -1,7 +1,7 @@
 (function( window, THREE ) {
 	'use strict';
 
-	var context, earth;
+	var context, earthMesh;
 
 
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
@@ -57,10 +57,79 @@
 	}
 
 
+	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/bower_components/threex.planets/threex.planets.js
+	function createEarthCloudLayer() {
+		var geometry, material;
+
+		// create cloud transparency on a 2d canvas
+		var canvas = document.createElement( 'canvas' );
+		canvas.width = 1024;
+		canvas.height = 512;
+		var canvasContext = canvas.getContext( '2d' );
+
+		var cloudsImage = new Image();
+		// when cloud image loads, apply transparency
+		cloudsImage.addEventListener( 'load', function() {
+			// draw image on new canvas
+			var cloudCanvas = document.createElement( 'canvas' );
+			cloudCanvas.width = cloudsImage.width;
+			cloudCanvas.height = cloudsImage.height;
+			var cloudContext = cloudCanvas.getContext( '2d' );
+			cloudContext.drawImage( cloudsImage, 0, 0 );
+			var cloudImageData = cloudContext.getImageData( 0, 0, cloudCanvas.width, cloudCanvas.height );
+
+			// create an image for the cloud transparency
+			var cloudsAlphaImage = new Image();
+			// when transparency is loaded, blend with clouds image
+			cloudsAlphaImage.addEventListener( 'load', function() {
+				var alphaCanvas = document.createElement( 'canvas' );
+				alphaCanvas.width = cloudsImage.width;
+				alphaCanvas.height = cloudsImage.height;
+				var alphaContext = alphaCanvas.getContext( '2d' );
+				alphaContext.drawImage( cloudsAlphaImage, 0, 0 );
+				var alphaData = alphaContext.getImageData( 0, 0, alphaCanvas.width, alphaCanvas.height );
+
+				// blend images
+				var blendedData = cloudContext.createImageData( canvas.width, canvas.height );
+				for ( var y = 0, offset = 0; y < cloudsImage.height; y++ ) {
+					for ( var x = 0; x < cloudsImage.width; x++, offset += 4 ) {
+						// rgba: copy RGB from clouds
+						blendedData.data[ offset ] = cloudImageData.data[ offset ];
+						blendedData.data[ offset + 1 ] = cloudImageData.data[ offset + 1 ];
+						blendedData.data[ offset + 2 ] = cloudImageData.data[ offset + 2 ];
+						// create alpha channel from RGB opacity data
+						blendedData.data[ offset + 3 ] = 255 - (( alphaData.data[ offset ] + alphaData.data[ offset + 1 ] + alphaData.data[ offset + 2 ] ) / 3 );
+					}
+				}
+				// update canvas
+				canvasContext.putImageData( blendedData, 0, 0 );
+				// refresh material
+				material.map.needsUpdate = true;
+			});
+			// load transparency image
+			cloudsAlphaImage.src = 'image/earthcloudmaptrans.jpg';
+		});
+		// load cloud image
+		cloudsImage.src = 'image/earthcloudmap.jpg';
+
+		geometry = new THREE.SphereGeometry( 0.51, 32, 32 ); // slightly larger than Earth radius
+		material = new THREE.MeshPhongMaterial({
+			map: new THREE.Texture( canvas ),
+			side: THREE.DoubleSide,
+			opacity: 0.8,
+			transparent: true,
+			depthWrite: false
+		});
+
+		return new THREE.Mesh( geometry, material );
+	}
+
+
 	// init
 	context = init();
-	earth = createEarth();
-	context.scene.add( earth );
+	earthMesh = createEarth();
+	earthMesh.add( createEarthCloudLayer() );
+	context.scene.add( earthMesh );
 
 
 	// render loop
