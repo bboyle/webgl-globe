@@ -48,6 +48,10 @@
 		material.bumpMap = THREE.ImageUtils.loadTexture( 'image/earthbump1k.jpg' );
 		material.bumpScale = 0.05;
 
+		// specular map for oceans
+		material.specularMap = THREE.ImageUtils.loadTexture( 'image/earthspec1k.jpg' );
+		material.specular = new THREE.Color( 0x333333 );
+
 		// mesh = geometry + material
 		return new THREE.Mesh( geometry, material );
 	}
