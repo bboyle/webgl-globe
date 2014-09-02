@@ -132,6 +132,9 @@
 	earthMesh.add( cloudMesh );
 	context.scene.add( earthMesh );
 
+	// rotation for 'globe'
+	earthMesh.rotation.z = -30 * Math.PI / 180;
+
 
 	// render loop
 	var lastTimeMsec;
