@@ -8,8 +8,8 @@
 	// http://threejs.org/docs/index.html#Manual/Introduction/Creating_a_scene
 	// view-source:http://learningthreejs.com/data/2013-09-16-how-to-make-the-earth-in-webgl/demo/index.html
 	function init() {
-		var w = 320;
-		var h = 240;
+		var w = 500;
+		var h = 500;
 		// To actually be able to display anything with Three.js, we need three things:
 		// A scene, a camera, and a renderer so we can render the scene with the camera.
 		var scene = new THREE.Scene();
@@ -59,30 +59,47 @@
 
 
 	function createGlobe( sphere ) {
-		var r = RADIUS_EARTH / 16;
-		var h = RADIUS_EARTH * 2.5;
+		var r, h;
+		var geometry;
 		var material = new THREE.MeshPhongMaterial({ color: 0xCD7F32 });
-		var globeMesh, baseMesh;
+		var globeMesh, spindleMesh, stemMesh, baseMesh, ringMesh;
 		
-		// create spindle
-		var geometry = new THREE.CylinderGeometry( r, r, h );
-
-		var spindleMesh = new THREE.Mesh( geometry, material );
-
-		// rotate earth and spindle
-		spindleMesh.rotation.z = -30 * Math.PI / 180;
-		earthMesh.rotation.z = -30 * Math.PI / 180;
+		// create ring
+		geometry = new THREE.TorusGeometry( RADIUS_EARTH * 1.2, RADIUS_EARTH / 24, 32, 32 );
+		ringMesh = new THREE.Mesh( geometry, material );
 
 		// create base
 		r = RADIUS_EARTH / 2;
 		h = RADIUS_EARTH / 16;
-		geometry = new THREE.CylinderGeometry( r, r, h );
+		geometry = new THREE.CylinderGeometry( r, r, h, 32 );
 
 		baseMesh = new THREE.Mesh( geometry, material );
-		baseMesh.translateY( -1.25 * RADIUS_EARTH );
 
+		// create stem
+		r = RADIUS_EARTH / 16;
+		h = RADIUS_EARTH * 0.4;
+		geometry = new THREE.CylinderGeometry( r, r, h, 32, 180 );
+		stemMesh = new THREE.Mesh( geometry, material );
+		
+		// create spindle
+		// r = same as stem
+		h = RADIUS_EARTH * 2.5;
+		geometry = new THREE.CylinderGeometry( r, r, h, 32, 180 );
+		spindleMesh = new THREE.Mesh( geometry, material );
+
+		// move base and stem
+		stemMesh.translateY( -1.4 * RADIUS_EARTH );
+		baseMesh.translateY( -1.4 * RADIUS_EARTH );
+
+		// rotate earth and spindle
+		spindleMesh.rotation.z = -23.5 * Math.PI / 180;
+		sphere.rotation.z = -23.5 * Math.PI / 180;
+
+		// assemble
 		globeMesh = new THREE.Mesh();
 		globeMesh.add( spindleMesh );
+		globeMesh.add( ringMesh );
+		globeMesh.add( stemMesh );
 		globeMesh.add( baseMesh );
 
 		return globeMesh;
@@ -177,8 +194,8 @@
 		render.lastTimeMsec = nowMsec;
 
 		// plot geometry
-		earthMesh.rotateY( 1 / 32 * deltaMsec / 1000 );
-		cloudMesh.rotateY( 1 / 16 * deltaMsec / 1000 );
+		earthMesh.rotateY( 1 / 4 * deltaMsec / 1000 );
+		cloudMesh.rotateY( 1 / 3 * deltaMsec / 1000 );
 
 		// render canvas
 		context.renderer.render( context.scene, context.camera );
